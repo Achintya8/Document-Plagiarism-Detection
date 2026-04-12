@@ -43,6 +43,6 @@ Open the Vite app in your browser and confirm the backend is running at `http://
   - Returns extracted `text`, `page_count`, and `char_count`
 
 ## Notes
-- PDF comparison works for searchable text-based PDFs.
+- PDF comparison works for searchable text-based PDFs only.
 - Image-only or scanned PDFs are not supported without OCR.
 - The UI explains why DP shows longest common substring while KMP/Rabin-Karp show n-gram overlap percentages.
