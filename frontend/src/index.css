@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
   color-scheme: light;
@@ -397,6 +397,21 @@ textarea:focus-visible {
   color: var(--ink);
   padding: 0.12rem 0.28rem;
   border-left: 3px solid var(--danger);
+}
+
+.preview-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.truncate-note {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
 }
 
 .doc-footer {

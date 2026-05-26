@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import {
   Search,
@@ -66,8 +66,8 @@ function App() {
         ? 'PDF'
         : 'Text'
       : doc2Mode === 'pdf'
-      ? 'PDF'
-      : 'Text';
+        ? 'PDF'
+        : 'Text';
   };
 
   const getSimilarityClass = (score) => {
@@ -99,18 +99,23 @@ function App() {
   const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   const renderHighlightedPreview = (text, matches) => {
-    if (!text) return 'No preview available.';
-    const stripped = escapeHtml(text).slice(0, 1200);
-    const uniqueMatches = Array.from(new Set(matches || [])).sort((a, b) => b.length - a.length).slice(0, 3);
-    let highlighted = stripped;
-    uniqueMatches.forEach((match) => {
-      if (!match || match.length < 3) return;
+    if (!text) return '';
+    // Escape the raw text first, then search for escaped versions of each match
+    const escaped = escapeHtml(text);
+    const truncated = escaped.slice(0, 3000);
+    // Sort longest-first (backend already does this, but guard client-side too)
+    const sortedMatches = Array.from(new Set(matches || []))
+      .filter(m => m && m.length >= 3)
+      .sort((a, b) => b.length - a.length);
+    let highlighted = truncated;
+    sortedMatches.forEach((match) => {
+      // Escape the match the same way the text was escaped so they align
       const safeMatch = escapeHtml(match);
-      const regex = new RegExp(escapeRegExp(safeMatch), 'g');
-      highlighted = highlighted.replace(regex, `<mark>${safeMatch}</mark>`);
+      const regex = new RegExp(escapeRegExp(safeMatch), 'gi');
+      highlighted = highlighted.replace(regex, `<mark>$&</mark>`);
     });
-    if (stripped.length === 1200) {
-      highlighted += '...';
+    if (escaped.length > 3000) {
+      highlighted += '<span class="truncate-note"> …(truncated)</span>';
     }
     return highlighted;
   };
@@ -325,6 +330,12 @@ function App() {
                       placeholder="Paste source text here..."
                     />
                     <div className="doc-footer">{leftMeta.chars} chars · {leftMeta.words} words</div>
+                    {results.length > 0 && results.some(r => r.matches.length > 0) && (
+                      <>
+                        <div className="preview-label">Highlighted matches</div>
+                        <div className="preview-box" dangerouslySetInnerHTML={{ __html: renderHighlightedPreview(doc1, results.flatMap((r) => r.matches)) }} />
+                      </>
+                    )}
                   </>
                 ) : (
                   <div className="file-panel">
@@ -385,6 +396,12 @@ function App() {
                       placeholder="Paste suspected text here..."
                     />
                     <div className="doc-footer">{rightMeta.chars} chars · {rightMeta.words} words</div>
+                    {results.length > 0 && results.some(r => r.matches.length > 0) && (
+                      <>
+                        <div className="preview-label">Highlighted matches</div>
+                        <div className="preview-box" dangerouslySetInnerHTML={{ __html: renderHighlightedPreview(doc2, results.flatMap((r) => r.matches)) }} />
+                      </>
+                    )}
                   </>
                 ) : (
                   <div className="file-panel">

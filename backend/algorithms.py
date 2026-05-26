@@ -121,11 +121,18 @@ def kmp_search(text: str, pattern: str):
     
     # Similarity based on how many chunks were found
     similarity = (matched_count / len(ngrams)) * 100
-    unique_matches = list(set(matches))
+    # Deduplicate and sort longest-first so frontend highlights longest spans first
+    seen = set()
+    unique_matches = []
+    for m in matches:
+        if m not in seen:
+            seen.add(m)
+            unique_matches.append(m)
+    unique_matches.sort(key=len, reverse=True)
     
     return {
         "similarity": round(similarity, 2),
-        "matches": unique_matches[:10], # Only return up to 10 chunks to avoid cluttering UI
+        "matches": unique_matches[:30],
         "execution_time": f"{execution_time:.2f}ms"
     }
 
@@ -197,10 +204,17 @@ def rabin_karp_search(text: str, pattern: str):
     execution_time = (time.perf_counter() - start_time) * 1000 # in ms
     
     similarity = (matched_count / len(ngrams)) * 100
-    unique_matches = list(set(matches))
+    # Deduplicate and sort longest-first so frontend highlights longest spans first
+    seen = set()
+    unique_matches = []
+    for m in matches:
+        if m not in seen:
+            seen.add(m)
+            unique_matches.append(m)
+    unique_matches.sort(key=len, reverse=True)
     
     return {
         "similarity": round(similarity, 2),
-        "matches": unique_matches[:10],
+        "matches": unique_matches[:30],
         "execution_time": f"{execution_time:.2f}ms"
     }
